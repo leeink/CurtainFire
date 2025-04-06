@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, ILivingEntity
 {
     public EnemyData enemyData;
     private Vector2 _direction = Vector2.left;
@@ -112,20 +112,6 @@ public class Enemy : MonoBehaviour
     {
         _managedPool = pool;
     }
-    
-    public void OnDamage(int amount)
-    {
-        _health -= amount;
-        if (this.enabled && _audio is not null && hitSound is not null)
-        {
-            _audio.PlayOneShot(hitSound);
-        }
-            
-        if (_health <= 0)
-        {
-            DestroyEnemy();
-        }
-    }
 
     public void RemoveEnemy()
     {
@@ -143,7 +129,6 @@ public class Enemy : MonoBehaviour
             CancelInvoke(nameof(RemoveEnemy));
             player.GainExperience(_experience);
             GameManager.Instance.AddScore(_point);
-            
             RemoveEnemy();
         }
     }
@@ -155,5 +140,30 @@ public class Enemy : MonoBehaviour
        initSpeed += 0.4f;
        initExperience = (int)((float)initExperience * 1.2);
        initPoint += 10;
+       initDamage += 20;
+    }
+
+    public void Heal(int amount)
+    {
+        return;
+    }
+
+    public void OnDamage(int amount)
+    {
+        _health -= amount;
+        if (this.enabled && _audio is not null && hitSound is not null)
+        {
+            _audio.PlayOneShot(hitSound);
+        }
+            
+        if (_health <= 0)
+        {
+            DestroyEnemy();
+        }
+    }
+
+    public void Die()
+    {
+        throw new NotImplementedException();
     }
 }

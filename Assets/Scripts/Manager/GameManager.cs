@@ -13,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     private float saveTimeScale;
     public Text scoreText;
     public Text levelText;
+    public BossSpawner bossSpawner;
     
     private AudioSource _audio;
 
@@ -20,6 +21,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject joyStick;
     public Action OnStageChange;
     public Action OnEvolution;
+    public Action OnBossSpawn;
     
     public int Stage
     {
@@ -60,6 +62,7 @@ public class GameManager : Singleton<GameManager>
     {
         GameStart();
         var player = FindFirstObjectByType<PlayerStatManager>();
+        OnBossSpawn += bossSpawner.SpawnBoss;
         player.OnDeath += GameOver;
         player.OnLevelUp += NextLevel;
     }
@@ -69,24 +72,35 @@ public class GameManager : Singleton<GameManager>
         _score += value;
         scoreText.text = _score.ToString();
     }
-    
-    public void NextLevel()
+
+    private void NextLevel()
     {
         _level++;
         levelText.text = _level.ToString();
-        Time.timeScale += 0.01f;
         if (_level % 10 == 0)
         {
             _stage++;
             OnStageChange?.Invoke();
         }
+        
 
-        if (_level == 41)
+        if (_level == 21)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new ThreeWayAttack());
+            OnBossSpawn?.Invoke();
+        }
+        else if (_level == 41)
+        {
+            var player = FindFirstObjectByType<PlayerAttackManager>();
+            player.SetAttackStrategy(new FourWayAttack());
         }
         else if (_level == 61)
+        {
+            var player = FindFirstObjectByType<PlayerAttackManager>();
+            player.SetAttackStrategy(new SevenWayAttack());
+        }
+        else if (_level == 81)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new FinalAttack());

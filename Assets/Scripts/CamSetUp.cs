@@ -1,13 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CamSetUp : MonoBehaviour
 {
-    public float targetAspectRatio = 16f / 9f; // 목표 화면 비율 (예: 16:9)
-
+    private CanvasScaler _canvasScaler;
     void Start()
     {
-        Camera cam = GetComponent<Camera>();
+        _canvasScaler = GetComponent<CanvasScaler>();
+        SetResolution();
+    }
+
+    private void SetResolution()
+    {
         int setWidth = 1920; // 사용자 설정 너비
         int setHeight = 1080; // 사용자 설정 높이
 
@@ -19,17 +24,14 @@ public class CamSetUp : MonoBehaviour
         if ((float)setWidth / setHeight < (float)deviceWidth / deviceHeight) // 기기의 해상도 비가 더 큰 경우
         {
             float newWidth = ((float)setWidth / setHeight) / ((float)deviceWidth / deviceHeight); // 새로운 너비
-            cam.rect = new Rect((1f - newWidth) / 2f, 0f, newWidth, 1f); // 새로운 Rect 적용
+            //if (Camera.main != null) Camera.main.rect = new Rect((1f - newWidth) / 2f, 0f, newWidth, 1f); // 새로운 Rect 적용
+            _canvasScaler.matchWidthOrHeight = 1;
         }
         else // 게임의 해상도 비가 더 큰 경우
         {
             float newHeight = ((float)deviceWidth / deviceHeight) / ((float)setWidth / setHeight); // 새로운 높이
-            cam.rect = new Rect(0f, (1f - newHeight) / 2f, 1f, newHeight); // 새로운 Rect 적용
+            //if (Camera.main != null) Camera.main.rect = new Rect(0f, (1f - newHeight) / 2f, 1f, newHeight); // 새로운 Rect 적용
+            _canvasScaler.matchWidthOrHeight = 0;
         }
-    }
-
-    private void OnPreCull()
-    {
-        GL.Clear(true, true, Color.black);
     }
 }

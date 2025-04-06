@@ -6,8 +6,8 @@ public class BaseAttack : IAttackable
 {
     public void Attack(IObjectPool<Bullet> pool, Transform playerTransform)
     {
-        int cnt = 4;
-        float angle = 60;
+        int cnt = 1;
+        float angle = 1f;
         float gap = cnt > 1 ? angle / (float)(cnt - 1) : 0;
         float startAngle = -angle / 2f;
 

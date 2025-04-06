@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 public class EnemySpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;
+    private PlayerStatManager _playerStatManager;
+    
     public float initSpawnRate;
     private float _spawnRate;
     private IObjectPool<Enemy> _enemyPool;
@@ -16,18 +18,22 @@ public class EnemySpawner : MonoBehaviour
     private int _enemyIndex;
     private float _time;
 
+    public Action OnUpgradeSpawner;
+
     private void Awake()
     {
         _enemyPool = new ObjectPool<Enemy>(
             CreateEnemy, OnGetEnemy,
             OnReleaseEnemy, OnDestroyEnemy,
             true, defaultPoolSize, maxPoolSize);
+        _playerStatManager = FindFirstObjectByType<PlayerStatManager>();
     }
 
     void Start()
     {
         _spawnRate = initSpawnRate;
         _time = 0;
+        _playerStatManager.OnLevelUp += DecreaseSpawnRate;
     }
 
     // Update is called once per frame
@@ -63,8 +69,14 @@ public class EnemySpawner : MonoBehaviour
         Destroy(enemy.gameObject);
     }
 
-    void SpawnEnemy()
+    private void SpawnEnemy()
     {
         _enemyPool.Get();
+    }
+
+    private void DecreaseSpawnRate()
+    {
+        if (_spawnRate < 0.25f) return;
+        _spawnRate -= 0.002f;
     }
 }

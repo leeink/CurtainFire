@@ -1,8 +1,9 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
+public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
 {
     [Header("Stat")]
     [SerializeField] private int health = 100;
@@ -20,6 +21,7 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
     private SpriteRenderer _playerSprite;
     
     public Slider healthSlider;
+    public TextMeshProUGUI healthText;
     public Slider experienceSlider;
 
     public Sprite upGrade1;
@@ -75,9 +77,11 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
         {
             health = maxHealth;
         }
+
+        UpdateHealthUI();
     }
-    
-    public void Damage(int amount)
+
+    public void OnDamage(int amount)
     {
         if(_pawnState is (EPlayerState.Dead or EPlayerState.Damaged))
         {
@@ -85,9 +89,9 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
         }
         
         health -= amount;
-        
-        healthSlider.value = (float)health / maxHealth;
 
+        UpdateHealthUI();
+        
         if (health <= 0)
         {
             Die();
@@ -128,9 +132,9 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
         experience = 0;
         experienceToNextLevel = (int) (experienceToNextLevel * 1.2f);
         maxHealth += 50;
-        health = maxHealth;
-        attack += 10;
-        attackRate -= 0.001f;
+        health += 30;
+        attack += 5;
+        attackRate -= 0.0005f;
         healthSlider.value = (float)health / maxHealth;
         OnLevelUp?.Invoke();
         Time.timeScale += 0.01f;
@@ -143,6 +147,14 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
         {
             _playerSprite.sprite = upGrade2;
         }
+
+        UpdateHealthUI();
+    }
+
+    public void UpdateHealthUI()
+    {
+        healthSlider.value = (float)health / maxHealth;
+        healthText.text = $"{health}  /  {maxHealth}";
     }
 
     public void OnTriggerEnter2D(Collider2D other)
@@ -150,7 +162,7 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel
         if (other.gameObject.CompareTag("Enemy"))
         {
             Enemy enemy = other.gameObject.GetComponent<Enemy>();
-            Damage(enemy.enemyData.Damage);
+            OnDamage(enemy.enemyData.Damage);
         }
     }
 }

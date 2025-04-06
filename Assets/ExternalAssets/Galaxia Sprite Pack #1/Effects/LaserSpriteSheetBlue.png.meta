@@ -142,10 +142,10 @@ TextureImporter:
       name: LaserSpriteSheetBlue_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 0
-        width: 18
-        height: 12
+        x: 52
+        y: 38
+        width: 12
+        height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -164,12 +164,12 @@ TextureImporter:
       name: LaserSpriteSheetBlue_1
       rect:
         serializedVersion: 2
-        x: 36
-        y: 0
-        width: 18
-        height: 64
+        x: 0
+        y: 10
+        width: 64
+        height: 18
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -186,10 +186,10 @@ TextureImporter:
       name: LaserSpriteSheetBlue_2
       rect:
         serializedVersion: 2
-        x: 8
-        y: 52
-        width: 18
-        height: 12
+        x: 0
+        y: 38
+        width: 14
+        height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -208,7 +208,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3a941a3e8d7a34f4688091f624e44385
     internalID: 0
     vertices: []
     indices: 

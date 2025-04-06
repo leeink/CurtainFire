@@ -60,10 +60,9 @@ public class Bullet : MonoBehaviour
         if (other is not null && other.gameObject.CompareTag("Enemy"))
         {
             CancelInvoke(nameof(DestroyBullet));
-            Enemy enemy = other.gameObject.GetComponent<Enemy>();
-            enemy.OnDamage(bulletData.Damage + _playerStatManager.Attack);
-            
-            DestroyBullet();
+            ILivingEntity enemy = other.gameObject.GetComponent<ILivingEntity>();
+            enemy?.OnDamage(bulletData.Damage + _playerStatManager.Attack);
+            Invoke(nameof(DestroyBullet), 0.001f);
         }
     }
 }
