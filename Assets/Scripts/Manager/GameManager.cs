@@ -94,16 +94,19 @@ public class GameManager : Singleton<GameManager>
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new FourWayAttack());
+            OnBossSpawn?.Invoke();
         }
         else if (_level == 61)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new SevenWayAttack());
+            OnBossSpawn?.Invoke();
         }
         else if (_level == 81)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new FinalAttack());
+            OnBossSpawn?.Invoke();
         }
     }
 

@@ -884,6 +884,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossPrefabs:
   - {fileID: 2484775665725091342, guid: 0089fff6693e04c46ab72911d4b36341, type: 3}
+  - {fileID: 4852356187561526149, guid: 8ce845ca6caee6f4599e8cdaa80e0d5f, type: 3}
   bossIndex: 0
 --- !u!4 &215739733
 Transform:
@@ -4039,42 +4040,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0fda72af12043f459c901aeb42f557f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &1002812873
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1002812840}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
 --- !u!1 &1018013436
 GameObject:
   m_ObjectHideFlags: 0
@@ -7769,6 +7734,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1100469018080366707, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
+      propertyPath: m_SortingOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2358617182454330439, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
       propertyPath: attackSound
       value: 
@@ -7834,6 +7803,10 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5428384953991957540, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
+      propertyPath: health
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5428384953991957540, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
       propertyPath: upGrade1
       value: 
       objectReference: {fileID: 21300000, guid: cab67442bb6328543af3dd33c6fa8780, type: 3}
@@ -7841,6 +7814,10 @@ PrefabInstance:
       propertyPath: upGrade2
       value: 
       objectReference: {fileID: 21300000, guid: f116b41b25d35934fbe991d13657e019, type: 3}
+    - target: {fileID: 5428384953991957540, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
+      propertyPath: maxHealth
+      value: 10000
+      objectReference: {fileID: 0}
     - target: {fileID: 5428384953991957540, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
       propertyPath: attackRate
       value: 0.3
@@ -7857,6 +7834,10 @@ PrefabInstance:
       propertyPath: experienceSlider
       value: 
       objectReference: {fileID: 930714449}
+    - target: {fileID: 5514983165108962531, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6116095360654690820, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
       propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -7934,9 +7915,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8311776969750181618, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
-      insertIndex: 6
-      addedObject: {fileID: 1002812873}
-    - targetCorrespondingSourceObject: {fileID: 8311776969750181618, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1002812859}
     - targetCorrespondingSourceObject: {fileID: 8311776969750181618, guid: 8465198161ea1ba4184b349624ddb3ac, type: 3}
@@ -7950,9 +7928,9 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 6910428290642678089}
   - {fileID: 1074728265}
+  - {fileID: 215739733}
   - {fileID: 1881815652}
   - {fileID: 1740615170}
   - {fileID: 1399996177}
   - {fileID: 862036610}
   - {fileID: 1148739739}
-  - {fileID: 215739733}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,6 +66,12 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
         set => level = value;
     }
 
+    public EPlayerState PawnState
+    {
+        get => _pawnState;
+        set => _pawnState = value;
+    }
+
     private void Awake()
     {
         _playerSprite = GetComponentInChildren<SpriteRenderer>();
@@ -89,6 +96,8 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
         }
         
         health -= amount;
+        _pawnState = EPlayerState.Damaged;
+        StartCoroutine(SetIdle());
 
         UpdateHealthUI();
         
@@ -96,6 +105,12 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
         {
             Die();
         }
+    }
+    
+    private IEnumerator SetIdle()
+    {
+        _pawnState = EPlayerState.Idle;
+        yield return new WaitForSeconds(1f);
     }
 
     public void Die()

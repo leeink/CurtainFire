@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
+public class Step2Boss : MonoBehaviour, ILivingEntity, IBoss
 {
     // 보스의 상태를 정의하는 열거형
     private enum BossState
@@ -15,15 +15,17 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
     private float _attackTime;
     private float _dirIntervalTime = 0;
     private float _attackIntervalTime = 0;
-    private float _attackDuration = 1.0f; // 공격 지속 시간 (초)
+    private float _attackDuration = 3f; // 공격 지속 시간 (초)
     private float _currentAttackTime = 0f; // 공격 진행 시간
     private Vector2 direction;
     private float _speed;
     private Vector2 _positionYRange = new Vector2(-4.27f, 4.27f);
     [SerializeField] private int health = 1000;
+    [SerializeField] private GameObject beamPrefab;
     
     private BossAttackManager _bossAttackManager;
     private CircleCollider2D _collider;
+    private LineRenderer _lineRenderer;
     
     public int Health
     {
@@ -34,12 +36,13 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
     void Awake()
     {
         _bossAttackManager = GetComponent<BossAttackManager>();
+        _lineRenderer = GetComponent<LineRenderer>();
     }
     
     void Start()
     {
-        _changeTime = Random.Range(1f, 3f);
-        _attackTime = Random.Range(2f, 4f);
+        _changeTime = Random.Range(3f, 5f);
+        _attackTime = Random.Range(3f, 5f);
         _collider = GetComponent<CircleCollider2D>();
         direction = Vector2.up;
         _speed = 2f;
@@ -104,8 +107,20 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
     
     public void AttackPattern()
     {
-        int cnt = 5;
-        float angle = 60f;
+        if (Random.Range(0, 2) < 1)
+        {
+            WayAttack();
+        }
+        else
+        {
+            StartCoroutine(ChargingAttack());
+        }
+    }
+    
+    private void WayAttack()
+    {
+        int cnt = 8;
+        float angle = 80f;
         float gap = cnt > 1 ? angle / (float)(cnt - 1) : 0;
         float startAngle = -angle / 2f;
 
@@ -114,10 +129,26 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
             float theta = startAngle + gap * (float)i;
             theta *= Mathf.Deg2Rad;
             EnemyBullet bullet = _bossAttackManager.Pool.Get();
-            Vector3 dir = new Vector3(-Mathf.Cos(theta), -Mathf.Sin(theta), 0);
+            Vector3 dir = new Vector3(-Mathf.Cos(theta), Mathf.Sin(theta), 0);
             bullet.transform.rotation = Quaternion.Euler(dir * Mathf.Rad2Deg);
             bullet.Direction = dir;
         }
+    }
+
+    private IEnumerator ChargingAttack()
+    {
+        _lineRenderer.positionCount = 2;
+        _lineRenderer.SetPosition(0, transform.position);
+        _lineRenderer.SetPosition(1, transform.position + (Vector3.left * 500f));
+
+        yield return new WaitForSeconds(.5f);
+        _lineRenderer.enabled = true;
+        yield return new WaitForSeconds(1f);
+        _lineRenderer.enabled = false;
+        
+        beamPrefab.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        beamPrefab.SetActive(false);
     }
 
     private void UpdateState(float value)
@@ -140,8 +171,6 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
         {
             Die();
         }
-        
-        Debug.Log($"Boss Health: {health}");
     }
 
     public void Die()

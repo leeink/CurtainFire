@@ -6,8 +6,8 @@ public class EnemyBullet : MonoBehaviour
 {
     public BossBullet bulletData;
     private IObjectPool<EnemyBullet> _managedPool;
-    private int _extraDamage;
     private Vector3 _direction;
+    private BoxCollider2D _collider;
     private bool isReleased = false;
     
     public Vector3 Direction
@@ -18,11 +18,13 @@ public class EnemyBullet : MonoBehaviour
     
     private void Awake()
     {
+        _collider = GetComponent<BoxCollider2D>();
     }
     
     void OnEnable()
     {
-        transform.position = GameObject.FindAnyObjectByType<Step1Boss>().transform.position;
+        _collider.enabled = true;
+        transform.position = GameObject.FindGameObjectWithTag("Boss").transform.position;
         DisableBullet();
     }
 
@@ -37,12 +39,6 @@ public class EnemyBullet : MonoBehaviour
         transform.Translate(_direction * (Time.deltaTime * bulletData.Speed));
     }
     
-    public int ExtraDamage
-    {
-        get => _extraDamage;
-        set => _extraDamage = value;
-    }
-
     void DisableBullet()
     {
         Invoke(nameof(DestroyBullet), 5f);
@@ -65,13 +61,16 @@ public class EnemyBullet : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other is not null && other.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Boss")) return;
+        
+        PlayerStatManager player = other.gameObject.GetComponent<PlayerStatManager>();
+        if (player is not null  && player.PawnState != EPlayerState.Damaged)
         {
+            _collider.enabled = false;
             CancelInvoke(nameof(DestroyBullet));
-            PlayerStatManager player = other.gameObject.GetComponent<PlayerStatManager>();
-            player.OnDamage(bulletData.Damage + _extraDamage);
-            Debug.Log("Hit Player");
-            Invoke(nameof(DestroyBullet), 0.01f);
+            player.OnDamage(bulletData.Damage);
+            Debug.Log("Hit Player: " + bulletData.Damage);
+            Invoke(nameof(DestroyBullet), 0.001f);
         }
     }
 }

@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
     public BulletData bulletData;
     private PlayerStatManager _playerStatManager;
     private IObjectPool<Bullet> _managedPool;
+    private CircleCollider2D _collider;
     private int _extraDamage;
     private Vector3 _direction;
     
@@ -20,10 +21,12 @@ public class Bullet : MonoBehaviour
     private void Awake()
     {
         _playerStatManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatManager>();
+        _collider = GetComponent<CircleCollider2D>();
     }
     
     void OnEnable()
     {
+        _collider.enabled = true;
         transform.position = GameObject.FindGameObjectWithTag("Player").transform.position;
         DisableBullet();
     }
@@ -57,10 +60,13 @@ public class Bullet : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other is not null && other.gameObject.CompareTag("Enemy"))
+        if (other.CompareTag("Player")) return;
+        
+        ILivingEntity enemy = other.gameObject.GetComponent<ILivingEntity>();
+        if (enemy is not null)
         {
+            _collider.enabled = false;
             CancelInvoke(nameof(DestroyBullet));
-            ILivingEntity enemy = other.gameObject.GetComponent<ILivingEntity>();
             enemy?.OnDamage(bulletData.Damage + _playerStatManager.Attack);
             Invoke(nameof(DestroyBullet), 0.001f);
         }
