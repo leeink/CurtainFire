@@ -148,7 +148,7 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
         experienceToNextLevel = (int) (experienceToNextLevel * 1.2f);
         maxHealth += 50;
         health += 30;
-        attack += 5;
+        attack += 3 * level;
         attackRate -= 0.0005f;
         healthSlider.value = (float)health / maxHealth;
         OnLevelUp?.Invoke();

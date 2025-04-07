@@ -30,6 +30,8 @@ public class Enemy : MonoBehaviour, ILivingEntity
     private int _experience;
     private int _point;
 
+    private int _level = 1;
+
     public int Health
     {
         get => _health;
@@ -94,7 +96,7 @@ public class Enemy : MonoBehaviour, ILivingEntity
             _direction = Vector2.left;
         }
         
-        Invoke(nameof(RemoveEnemy), 2f);
+        Invoke(nameof(RemoveEnemy), 4f);
     }
 
     // Update is called once per frame
@@ -134,8 +136,9 @@ public class Enemy : MonoBehaviour, ILivingEntity
     }
 
     private void StatUp()
-    {
-       initMaxHealth += 40;
+    { 
+        _level++;
+       initMaxHealth += 10 * _level;
        initDamage += 70;
        initSpeed += 0.4f;
        initExperience = (int)((float)initExperience * 1.2);

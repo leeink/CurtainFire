@@ -20,7 +20,6 @@ public class GameManager : Singleton<GameManager>
     public GameObject gameOverPanel;
     public GameObject joyStick;
     public Action OnStageChange;
-    public Action OnEvolution;
     public Action OnBossSpawn;
     
     public int Stage
@@ -62,6 +61,7 @@ public class GameManager : Singleton<GameManager>
     {
         GameStart();
         var player = FindFirstObjectByType<PlayerStatManager>();
+        player.UpdateHealthUI();
         OnBossSpawn += bossSpawner.SpawnBoss;
         player.OnDeath += GameOver;
         player.OnLevelUp += NextLevel;
