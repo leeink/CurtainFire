@@ -14,12 +14,9 @@ public class EnemySpawner : MonoBehaviour
     private IObjectPool<Enemy> _enemyPool;
     [SerializeField] private int defaultPoolSize;
     [SerializeField] private int maxPoolSize;
-    private Vector3 _spawnPosition;
-    private int _enemyIndex;
+    [SerializeField] private Transform spawnPosition;
     private float _time;
-
-    public Action OnUpgradeSpawner;
-
+    
     private void Awake()
     {
         _enemyPool = new ObjectPool<Enemy>(
@@ -31,6 +28,7 @@ public class EnemySpawner : MonoBehaviour
 
     void Start()
     {
+        GameManager.Instance.OnFinalStage += () => enabled = false;
         _spawnRate = initSpawnRate;
         _time = 0;
         _playerStatManager.OnLevelUp += DecreaseSpawnRate;
@@ -49,7 +47,7 @@ public class EnemySpawner : MonoBehaviour
 
     private Enemy CreateEnemy()
     {
-        Enemy enemy = Instantiate(enemyPrefab, _spawnPosition, Quaternion.identity).GetComponent<Enemy>();
+        Enemy enemy = Instantiate(enemyPrefab, spawnPosition.position, Quaternion.identity).GetComponent<Enemy>();
         enemy.SetMangedPool(_enemyPool);
         return enemy;
     }
@@ -79,4 +77,5 @@ public class EnemySpawner : MonoBehaviour
         if (_spawnRate < 0.25f) return;
         _spawnRate -= 0.002f;
     }
+    
 }

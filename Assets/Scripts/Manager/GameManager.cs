@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
@@ -11,28 +12,25 @@ public class GameManager : Singleton<GameManager>
     private bool _isGameOver;
     private bool _isGamePause;
     private float saveTimeScale;
-    public Text scoreText;
-    public Text levelText;
+    
     public BossSpawner bossSpawner;
     
-    private AudioSource _audio;
-
+    [Header("UI")]
+    public Text scoreText;
+    public Text levelText;
     public GameObject gameOverPanel;
     public GameObject joyStick;
+    
+    [Header("Event Sounds")]
+    private AudioSource _audio;
+    public AudioClip gameClearClip;
+    public AudioClip gameOverClip;
+    public AudioClip gameResumeClip;
+    
     public Action OnStageChange;
-    public Action OnBossSpawn;
-    
-    public int Stage
-    {
-        get => _stage;
-        set => _stage = value;
-    }
-    
-    public int Score
-    {
-        get => _score;
-        set => _score = value;
-    }
+    private Action _onBossSpawn;
+    public Action OnFinalStage;
+    public Action OnSpawnerUpgrade;
     
     public bool IsGameOver
     {
@@ -53,7 +51,7 @@ public class GameManager : Singleton<GameManager>
             Instance = this;
         }
         _audio = GetComponent<AudioSource>();
-        Application.targetFrameRate = 60;
+        _audio.ignoreListenerPause = true;
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -62,7 +60,7 @@ public class GameManager : Singleton<GameManager>
         GameStart();
         var player = FindFirstObjectByType<PlayerStatManager>();
         player.UpdateHealthUI();
-        OnBossSpawn += bossSpawner.SpawnBoss;
+        _onBossSpawn += bossSpawner.SpawnBoss;
         player.OnDeath += GameOver;
         player.OnLevelUp += NextLevel;
     }
@@ -83,30 +81,32 @@ public class GameManager : Singleton<GameManager>
             OnStageChange?.Invoke();
         }
         
-
-        if (_level == 21)
+        if (_level == 20)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new ThreeWayAttack());
-            OnBossSpawn?.Invoke();
+            _onBossSpawn?.Invoke();
         }
-        else if (_level == 41)
+        else if (_level == 40)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new FourWayAttack());
-            OnBossSpawn?.Invoke();
+            _onBossSpawn?.Invoke();
         }
-        else if (_level == 61)
+        else if (_level == 60)
         {
             var player = FindFirstObjectByType<PlayerAttackManager>();
             player.SetAttackStrategy(new SevenWayAttack());
-            OnBossSpawn?.Invoke();
+            _onBossSpawn?.Invoke();
+            OnSpawnerUpgrade?.Invoke();
         }
-        else if (_level == 81)
+        else if (_level == 80)
         {
-            var player = FindFirstObjectByType<PlayerAttackManager>();
-            player.SetAttackStrategy(new FinalAttack());
-            OnBossSpawn?.Invoke();
+            _onBossSpawn?.Invoke();
+        }
+        else if (_level == 100)
+        {
+            OnFinalStage?.Invoke();
         }
     }
 
@@ -127,9 +127,20 @@ public class GameManager : Singleton<GameManager>
     public void GameOver()
     {
         GamePause();
+        _audio.Stop();
         _isGameOver = true;
         gameOverPanel.SetActive(true);
         gameOverPanel.transform.Find("Record").GetComponent<Text>().text = _score.ToString();
+        _audio.PlayOneShot(gameOverClip);
+    }
+
+    public void GameClear()
+    {
+        GamePause();
+        _audio.Stop();
+        gameOverPanel.SetActive(true);
+        gameOverPanel.transform.Find("Record").GetComponent<Text>().text = _score.ToString();
+        _audio.PlayOneShot(gameClearClip);
     }
 
     public void GamePause()
@@ -145,6 +156,13 @@ public class GameManager : Singleton<GameManager>
     {
         _isGamePause = false;
         Time.timeScale = saveTimeScale;
+        _audio.PlayOneShot(gameResumeClip);
+        _audio.UnPause();
+    }
+
+    public void PlayOneShotClip(AudioClip clip)
+    {
+        _audio.PlayOneShot(clip);
     }
 
     public void GameRestart()

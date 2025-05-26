@@ -69,4 +69,12 @@ public class PlayerInput : MonoBehaviour
             GameManager.Instance.GameOver();
         }
     }
+
+    public void ActionGameClear(InputAction.CallbackContext context)
+    {
+        if (context.performed && cheatMode)
+        {
+            GameManager.Instance.GameClear();
+        }
+    }
 }

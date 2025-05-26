@@ -1,18 +1,14 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class ItemBase : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public AudioClip useClip;
+    
     public void Start()
     {
         StartCoroutine(nameof(CorDestroy));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
     
     public void OnTriggerEnter2D(Collider2D other)
@@ -28,6 +24,7 @@ public class ItemBase : MonoBehaviour
 
     protected virtual void Use(PlayerStatManager playerStatManager)
     {
+        GameManager.Instance.PlayOneShotClip(useClip);
         ItemDestroy();
     }
 

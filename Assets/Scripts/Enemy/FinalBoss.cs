@@ -1,0 +1,223 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class FinalBoss : MonoBehaviour, ILivingEntity, IBoss
+{
+    private enum BossState
+    {
+        Moving,
+        Attacking
+    }
+    
+    private BossState _currentState = BossState.Moving;
+    private float _changeTime;
+    private float _attackTime;
+    private float _dirIntervalTime = 0;
+    private float _attackIntervalTime = 0;
+    private float _attackDuration = 3f; // 공격 지속 시간 (초)
+    private float _currentAttackTime = 0f; // 공격 진행 시간
+    private Vector2 direction;
+    private float _speed;
+    private Vector2 _positionYRange = new Vector2(-4.27f, 4.27f);
+    [SerializeField] private int maxHealth = 1000;
+    private int _health;
+    [SerializeField] private GameObject[] beamPrefabs;
+    [SerializeField] private GameObject[] beamHintPrefabs;
+    
+    private BossAttackManager _bossAttackManager;
+    private CircleCollider2D _collider;
+    private AudioSource _audio;
+
+    public AudioClip hitSound;
+
+    public Slider HpBar;
+    
+    public int Health
+    {
+        get => _health;
+        set => _health = value;
+    }
+    
+    void Awake()
+    {
+        _bossAttackManager = GetComponent<BossAttackManager>();
+    }
+    
+    void Start()
+    {
+        _changeTime = Random.Range(3f, 5f);
+        _attackTime = Random.Range(3f, 5f);
+        _collider = GetComponent<CircleCollider2D>();
+        direction = Vector2.up;
+        _speed = 2f;
+        _health = maxHealth;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        _attackIntervalTime += Time.deltaTime;
+        
+        // 현재 상태에 따라 다른 행동을 수행
+        switch(_currentState)
+        {
+            case BossState.Moving:
+                // 이동 중일 때는 BaseAction을 수행하고 공격 타이밍을 체크
+                BaseAction();
+                
+                // 공격할 시간이 되면 상태를 Attacking으로 전환
+                if (_attackIntervalTime >= _attackTime)
+                {
+                    _currentState = BossState.Attacking;
+                    _currentAttackTime = 0f;
+                    AttackPattern();  // 공격 패턴 실행
+                    _attackIntervalTime = 0; // 공격 간격 타이머 초기화
+                }
+                break;
+                
+            case BossState.Attacking:
+                // 공격 중일 때는 이동하지 않고 공격 지속 시간을 체크
+                _currentAttackTime += Time.deltaTime;
+                
+                // 공격 지속 시간이 끝나면 다시 이동 상태로 전환
+                if (_currentAttackTime >= _attackDuration)
+                {
+                    _currentState = BossState.Moving;
+                }
+                break;
+        }
+    }
+
+    public void BaseAction()
+    {
+        _dirIntervalTime += Time.deltaTime;
+        
+        transform.Translate(direction * (_speed * Time.deltaTime));
+        
+        if (_dirIntervalTime >= _changeTime)
+        {
+            UpdateState(-direction.y);
+        }
+        if (transform.position.y >= _positionYRange.y)
+        {
+            transform.position = new Vector2(transform.position.x, _positionYRange.y);
+            UpdateState(-1);
+        }
+        else if (transform.position.y <= _positionYRange.x)
+        {
+            transform.position = new Vector2(transform.position.x, _positionYRange.x);
+            UpdateState(1);
+        }
+    }
+    
+    public void AttackPattern()
+    {
+        switch(Random.Range(0, 3))
+        {
+            case 0:
+                WayAttack();
+                break;
+            case 1:
+                StartCoroutine(BeamAttack());
+                break;
+            case 2:
+                StartCoroutine(BeamWayAttack());
+                break;
+        }
+    }
+    
+    private void WayAttack()
+    {
+        int cnt = 8;
+        float angle = 80f;
+        float gap = cnt > 1 ? angle / (float)(cnt - 1) : 0;
+        float startAngle = -angle / 2f;
+
+        for (int i = 0; i < cnt; ++i)
+        {
+            float theta = startAngle + gap * (float)i;
+            theta *= Mathf.Deg2Rad;
+            EnemyBullet bullet = _bossAttackManager.Pool.Get();
+            Vector3 dir = new Vector3(-Mathf.Cos(theta), Mathf.Sin(theta), 0);
+            bullet.transform.rotation = Quaternion.Euler(dir * Mathf.Rad2Deg);
+            bullet.Direction = dir;
+        }
+    }
+
+    private IEnumerator BeamAttack()
+    {
+        int rand = Random.Range(0, beamHintPrefabs.Length - 1);
+        yield return new WaitForSeconds(.5f);
+        beamHintPrefabs[rand].SetActive(true);
+        yield return new WaitForSeconds(1f);
+        beamHintPrefabs[rand].SetActive(false);
+        
+        beamPrefabs[rand].SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        beamPrefabs[rand].SetActive(false);
+    }
+
+    private IEnumerator BeamWayAttack()
+    {
+        yield return new WaitForSeconds(.5f);
+        
+        foreach(var beamHint in beamHintPrefabs)
+        {
+            beamHint.SetActive(true);
+        }
+        
+        yield return new WaitForSeconds(0.9f);
+        
+        foreach(var beamHint in beamHintPrefabs)
+        {
+            beamHint.SetActive(false);
+        }
+
+        foreach(var beam in beamPrefabs)
+        {
+            beam.SetActive(true);
+        }
+        
+        yield return new WaitForSeconds(1.4f);
+        
+        foreach(var beam in beamPrefabs)
+        {
+            beam.SetActive(false);
+        }
+    }
+
+    private void UpdateState(float value)
+    {
+        _dirIntervalTime = 0;
+        _changeTime = Random.Range(1f, 3f);
+        _speed = Random.Range(2f, 5f);
+        direction = new Vector2(0, value);
+    }
+
+    public void Heal(int amount)
+    {
+        return;
+    }
+
+    public void OnDamage(int amount)
+    {
+        _health -= amount;
+        if (this.enabled && _audio is not null && hitSound is not null)
+        {
+            _audio.PlayOneShot(hitSound);
+        }
+        
+        if (_health <= 0)
+        {
+            Die();
+        }
+        
+        HpBar.value = (float)_health / maxHealth;
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
+}

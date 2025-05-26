@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Step2Boss : MonoBehaviour, ILivingEntity, IBoss
 {
@@ -26,6 +27,9 @@ public class Step2Boss : MonoBehaviour, ILivingEntity, IBoss
     private BossAttackManager _bossAttackManager;
     private CircleCollider2D _collider;
     private LineRenderer _lineRenderer;
+    private AudioSource _audio;
+
+    public AudioClip hitSound;
     
     public int Health
     {
@@ -167,6 +171,11 @@ public class Step2Boss : MonoBehaviour, ILivingEntity, IBoss
     public void OnDamage(int amount)
     {
         health -= amount;
+        if (this.enabled && _audio is not null && hitSound is not null)
+        {
+            _audio.PlayOneShot(hitSound);
+        }
+        
         if (health <= 0)
         {
             Die();

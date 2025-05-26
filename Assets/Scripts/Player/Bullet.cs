@@ -68,7 +68,6 @@ public class Bullet : MonoBehaviour
             _collider.enabled = false;
             CancelInvoke(nameof(DestroyBullet));
             enemy?.OnDamage(bulletData.Damage + _playerStatManager.Attack);
-            Debug.Log(bulletData.Damage + _playerStatManager.Attack);
             Invoke(nameof(DestroyBullet), 0.001f);
         }
     }

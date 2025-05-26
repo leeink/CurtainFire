@@ -3,11 +3,11 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
 {
-    [Header("Stat")]
-    [SerializeField] private int health = 100;
+    [Header("Stat")] private int _health;
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int attack = 20;
     [SerializeField] private float attackRate = .3f;
@@ -18,23 +18,30 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
     [SerializeField] private int experience = 0;
     [SerializeField] private int experienceToNextLevel = 10;
     
-    private EPlayerState _pawnState;
+    [Header("SFX")]
+    private AudioSource _audioSource;
+    public AudioClip spaceUpgradeClip;
+    
+    [Header("LevelUpAsset")]
+    public Sprite upGrade1;
+    public Sprite upGrade2;
+    public GameObject levelUpEffect;
     private SpriteRenderer _playerSprite;
     
+    [Header("UI")]
     public Slider healthSlider;
     public TextMeshProUGUI healthText;
     public Slider experienceSlider;
-
-    public Sprite upGrade1;
-    public Sprite upGrade2;
-
+    
+    private EPlayerState _pawnState;
+    
     public Action OnLevelUp;
     public Action OnDeath;
     
     public int Health
     {
-        get => health;
-        set => health = value;
+        get => _health;
+        set => _health = value;
     }
     
     public int MaxHealth
@@ -75,14 +82,21 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
     private void Awake()
     {
         _playerSprite = GetComponentInChildren<SpriteRenderer>();
+        _audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Start()
+    {
+        Health = maxHealth;
+        UpdateHealthUI();
     }
 
     public void Heal(int amount)
     {
-        health += amount;
-        if (health > maxHealth)
+        _health += amount;
+        if (_health > maxHealth)
         {
-            health = maxHealth;
+            _health = maxHealth;
         }
 
         UpdateHealthUI();
@@ -95,13 +109,13 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
             return;
         }
         
-        health -= amount;
+        _health -= amount;
         _pawnState = EPlayerState.Damaged;
         StartCoroutine(SetIdle());
 
         UpdateHealthUI();
         
-        if (health <= 0)
+        if (_health <= 0)
         {
             Die();
         }
@@ -147,29 +161,38 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
         experience = 0;
         experienceToNextLevel = (int) (experienceToNextLevel * 1.2f);
         maxHealth += 50;
-        health += 30;
-        attack += 3 * level;
+        attack += 25;
         attackRate -= 0.0005f;
-        healthSlider.value = (float)health / maxHealth;
+        _health = maxHealth;
+        healthSlider.value = (float)_health / maxHealth;
         OnLevelUp?.Invoke();
         Time.timeScale += 0.01f;
 
         if (level == 20)
         {
-            _playerSprite.sprite = upGrade1;
+            StartCoroutine(LevelUpSpace(upGrade1));
         }
         else if (level == 40)
         {
-            _playerSprite.sprite = upGrade2;
+            StartCoroutine(LevelUpSpace(upGrade2));
         }
-
+        
         UpdateHealthUI();
+    }
+
+    private IEnumerator LevelUpSpace(Sprite sprite)
+    {
+        levelUpEffect.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        _playerSprite.sprite = sprite;
+        levelUpEffect.SetActive(false);
+        _audioSource.PlayOneShot(spaceUpgradeClip);
     }
 
     public void UpdateHealthUI()
     {
-        healthSlider.value = (float)health / maxHealth;
-        healthText.text = $"{health}  /  {maxHealth}";
+        healthSlider.value = (float)_health / maxHealth;
+        healthText.text = $"{_health}  /  {maxHealth}";
     }
 
     public void OnTriggerEnter2D(Collider2D other)
@@ -178,6 +201,7 @@ public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
         {
             Enemy enemy = other.gameObject.GetComponent<Enemy>();
             OnDamage(enemy.enemyData.Damage);
+            enemy.DestroyEnemy();
         }
     }
 }

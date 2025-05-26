@@ -7,6 +7,7 @@ public class CamSetUp : MonoBehaviour
     private CanvasScaler _canvasScaler;
     void Start()
     {
+        Application.targetFrameRate = 60;
         _canvasScaler = GetComponent<CanvasScaler>();
         SetResolution();
     }

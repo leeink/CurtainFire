@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "com.unity.adaptiveperformance.google.android": "5.1.2",
+    "com.unity.ai.navigation": "2.0.6",
+    "com.unity.behavior": "1.0.8",
     "com.unity.collab-proxy": "2.7.1",
     "com.unity.device-simulator.devices": "1.0.0",
     "com.unity.feature.2d": "2.0.1",

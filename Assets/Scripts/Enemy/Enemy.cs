@@ -2,18 +2,28 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour, ILivingEntity
 {
-    public EnemyData enemyData;
     private Vector2 _direction = Vector2.left;
     private IObjectPool<Enemy> _managedPool;
+    
+    [Header("Prefab")]
+    public EnemyData enemyData;
     [SerializeField] private Vector3[] spawnPositions;
     
-    private PlayerStatManager player;
+    [Header("SFX")]
     private AudioSource _audio;
     public AudioClip hitSound;
+    public AudioClip destroySound;
+    
+    private PlayerStatManager player;
+    
+    [Header("UI and player")]
+    private SpriteRenderer _spriteRenderer;
+    public Canvas UnitCanvas;
     
     private bool _isReleased;
     private int initHealth;
@@ -65,6 +75,7 @@ public class Enemy : MonoBehaviour, ILivingEntity
     private void Awake()
     {
         _audio = GetComponent<AudioSource>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         player = FindFirstObjectByType<PlayerStatManager>();
         player.OnLevelUp += StatUp;
         
@@ -77,6 +88,8 @@ public class Enemy : MonoBehaviour, ILivingEntity
     }
     private void OnEnable()
     {
+        UnitCanvas.gameObject.SetActive(false);
+        _spriteRenderer.enabled = true;
         _isReleased = false;
         _maxHealth = initMaxHealth;
         _health = _maxHealth;
@@ -124,14 +137,15 @@ public class Enemy : MonoBehaviour, ILivingEntity
         }
     }
 
-    private void DestroyEnemy()
+    public void DestroyEnemy()
     {
         if (!_isReleased)
         {
             CancelInvoke(nameof(RemoveEnemy));
             player.GainExperience(_experience);
             GameManager.Instance.AddScore(_point);
-            RemoveEnemy();
+            StartCoroutine(PlayEffectAndRemove());
+            _audio.PlayOneShot(destroySound, 0.7f);
         }
     }
 
@@ -163,6 +177,14 @@ public class Enemy : MonoBehaviour, ILivingEntity
         {
             DestroyEnemy();
         }
+    }
+
+    private IEnumerator PlayEffectAndRemove()
+    {
+        _spriteRenderer.enabled = false;
+        UnitCanvas.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        RemoveEnemy();
     }
 
     public void Die()

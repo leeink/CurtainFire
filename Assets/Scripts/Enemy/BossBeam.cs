@@ -16,7 +16,6 @@ public class BossBeam : MonoBehaviour
         if (other.TryGetComponent<ILivingEntity>(out var entity))
         {
             entity.OnDamage(beamTickDamage);
-            Debug.Log($"Beam Damage: {beamTickDamage}");
         }
     }
 }

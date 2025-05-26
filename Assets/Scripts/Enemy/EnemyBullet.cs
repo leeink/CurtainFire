@@ -69,7 +69,6 @@ public class EnemyBullet : MonoBehaviour
             _collider.enabled = false;
             CancelInvoke(nameof(DestroyBullet));
             player.OnDamage(bulletData.Damage);
-            Debug.Log("Hit Player: " + bulletData.Damage);
             Invoke(nameof(DestroyBullet), 0.001f);
         }
     }

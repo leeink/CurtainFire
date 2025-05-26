@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
 {
@@ -23,7 +24,11 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
     [SerializeField] private int health = 1000;
     
     private BossAttackManager _bossAttackManager;
-    private CircleCollider2D _collider;
+    private SpriteRenderer _spriteRenderer;
+    private AudioSource _audio;
+
+    public AudioClip hitSound;
+    public Canvas UnitCanvas;
     
     public int Health
     {
@@ -33,14 +38,20 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
     
     void Awake()
     {
+        UnitCanvas.gameObject.SetActive(false);
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         _bossAttackManager = GetComponent<BossAttackManager>();
+    }
+
+    void OnEnable()
+    {
+        _spriteRenderer.enabled = true;
     }
     
     void Start()
     {
         _changeTime = Random.Range(1f, 3f);
         _attackTime = Random.Range(2f, 4f);
-        _collider = GetComponent<CircleCollider2D>();
         direction = Vector2.up;
         _speed = 2f;
     }
@@ -136,12 +147,17 @@ public class Step1Boss : MonoBehaviour, ILivingEntity, IBoss
     public void OnDamage(int amount)
     {
         health -= amount;
-        if (health <= 0)
+        if (this.enabled && _audio is not null && hitSound is not null)
         {
-            Die();
+            _audio.PlayOneShot(hitSound);
         }
         
-        Debug.Log($"Boss Health: {health}");
+        if (health <= 0)
+        {
+            _spriteRenderer.enabled = false;
+            UnitCanvas.gameObject.SetActive(true);
+            Invoke(nameof(Die), 0.5f);
+        }
     }
 
     public void Die()

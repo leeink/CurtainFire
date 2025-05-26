@@ -22,10 +22,13 @@ public class Step3Boss : MonoBehaviour, ILivingEntity, IBoss
     private Vector2 _positionYRange = new Vector2(-4.27f, 4.27f);
     [SerializeField] private int health = 1000;
     [SerializeField] private GameObject[] beamPrefabs;
+    [SerializeField] private GameObject[] beamHintPrefabs;
     
     private BossAttackManager _bossAttackManager;
     private CircleCollider2D _collider;
-    private LineRenderer _lineRenderer;
+    private AudioSource _audio;
+
+    public AudioClip hitSound;
     
     public int Health
     {
@@ -36,7 +39,6 @@ public class Step3Boss : MonoBehaviour, ILivingEntity, IBoss
     void Awake()
     {
         _bossAttackManager = GetComponent<BossAttackManager>();
-        _lineRenderer = GetComponent<LineRenderer>();
     }
     
     void Start()
@@ -107,13 +109,17 @@ public class Step3Boss : MonoBehaviour, ILivingEntity, IBoss
     
     public void AttackPattern()
     {
-        if (Random.Range(0, 2) < 1)
+        switch(Random.Range(0, 3))
         {
-            WayAttack();
-        }
-        else
-        {
-            StartCoroutine(BeamAttack());
+            case 0:
+                WayAttack();
+                break;
+            case 1:
+                StartCoroutine(BeamAttack());
+                break;
+            case 2:
+                StartCoroutine(BeamWayAttack());
+                break;
         }
     }
     
@@ -137,19 +143,10 @@ public class Step3Boss : MonoBehaviour, ILivingEntity, IBoss
 
     private IEnumerator BeamAttack()
     {
-        _lineRenderer.positionCount = 2;
-        _lineRenderer.SetPosition(0, transform.position);
-        _lineRenderer.SetPosition(1, transform.position + (Vector3.left * 500f));
-
         yield return new WaitForSeconds(.5f);
-        _lineRenderer.enabled = true;
+        beamHintPrefabs[1].SetActive(true);
         yield return new WaitForSeconds(1f);
-        _lineRenderer.enabled = false;
-        
-        yield return new WaitForSeconds(.5f);
-        _lineRenderer.enabled = true;
-        yield return new WaitForSeconds(1f);
-        _lineRenderer.enabled = false;
+        beamHintPrefabs[1].SetActive(false);
         
         beamPrefabs[1].SetActive(true);
         yield return new WaitForSeconds(1.5f);
@@ -158,21 +155,26 @@ public class Step3Boss : MonoBehaviour, ILivingEntity, IBoss
 
     private IEnumerator BeamWayAttack()
     {
-        _lineRenderer.positionCount = 4;
-        _lineRenderer.SetPosition(0, transform.position);
-        _lineRenderer.SetPosition(1, transform.position + (Vector3.left * 500f));
-        
         yield return new WaitForSeconds(.5f);
-        _lineRenderer.enabled = true;
-        yield return new WaitForSeconds(1f);
-        _lineRenderer.enabled = false;
+        
+        foreach(var beamHint in beamHintPrefabs)
+        {
+            beamHint.SetActive(true);
+        }
+        
+        yield return new WaitForSeconds(0.9f);
+        
+        foreach(var beamHint in beamHintPrefabs)
+        {
+            beamHint.SetActive(false);
+        }
 
         foreach(var beam in beamPrefabs)
         {
-            beam.SetActive(false);
+            beam.SetActive(true);
         }
         
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.4f);
         
         foreach(var beam in beamPrefabs)
         {
@@ -196,6 +198,11 @@ public class Step3Boss : MonoBehaviour, ILivingEntity, IBoss
     public void OnDamage(int amount)
     {
         health -= amount;
+        if (this.enabled && _audio is not null && hitSound is not null)
+        {
+            _audio.PlayOneShot(hitSound);
+        }
+        
         if (health <= 0)
         {
             Die();
