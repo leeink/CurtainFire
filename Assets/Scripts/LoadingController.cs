@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -10,20 +12,26 @@ public class LoadingController : MonoBehaviour
 {
     public static string nextScene;
     
+    public Image loadingTipImage;
+    
     [SerializeField] private Slider loadingBar;
     [SerializeField] private Button startButton;
     [SerializeField] private Button gameTipScript;
-    [SerializeField] private TextMeshProUGUI tipText;
+    [SerializeField] private Text tipText;
 
+    [SerializeField] private Sprite[] tipSprite;
+    public LocalizeStringEvent localizeStringEvent;
     private int _tipIndex = 0;
     private IDictionary<int, string> _tipScript = new Dictionary<int, string>()
     {
-        { 0, "LoadingTip1" },
-        { 1, "LoadingTip2" },
-        { 2, "LoadingTip3" },
-        { 3, "LoadingTip4" },
-        { 4, "LoadingTip5" }
+        { 0, "Kill the enemy and Level up your space" },
+        { 1, "As your space levels up, enemies also become stronger." },
+        { 2, "When you reach a certain level, a powerful enemy will appear." },
+        { 3, "Repair your space and become stronger by picking up randomly appearing items." },
+        { 4, "Leveling up allows you to perform stronger attacks." }
     };
+    
+    public LocalizedString[] localizedTips = new LocalizedString[5];
     
     private AsyncOperation _op;
 
@@ -39,7 +47,7 @@ public class LoadingController : MonoBehaviour
         tipText.text = _tipScript[_tipIndex];
         startButton.onClick.AddListener(OnClickGameStart);
         gameTipScript.onClick.AddListener(NextScript);
-        Task.Run(OtherDataLoad);
+        //Task.Run(OtherDataLoad);
         StartCoroutine(LoadSceneProgress());
     }
 
@@ -65,7 +73,7 @@ public class LoadingController : MonoBehaviour
 
                 if (loadingBar.value >= 1f)
                 {
-                    yield return new WaitForSeconds(5f);
+                    yield return new WaitForSeconds(5f);    // Fake loading time
                     OnStartUI();
                     yield break;
                 }
@@ -89,13 +97,8 @@ public class LoadingController : MonoBehaviour
     private void NextScript()
     {
         _tipIndex = (_tipIndex + 1) % _tipScript.Count;
-        tipText.text = _tipScript[_tipIndex];
-    }
-
-    private void OtherDataLoad()
-    {
-        Debug.Log("Other Data Loading...");
-        System.Threading.Thread.Sleep(5000);
-        Debug.Log("Other Data Loaded.");
+        loadingTipImage.sprite = tipSprite[_tipIndex];
+        //tipText.text = _tipScript[_tipIndex];
+        localizeStringEvent.StringReference = localizedTips[_tipIndex];
     }
 }

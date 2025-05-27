@@ -3,7 +3,6 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class PlayerStatManager : MonoBehaviour, IStatable, ILevel, ILivingEntity
 {
