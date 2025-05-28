@@ -167,7 +167,7 @@ public class GameManager : Singleton<GameManager>
 
     public void GameRestart()
     {
-        LoadingController.LoadScene("Scenes/GameScene");
+        SceneManager.LoadScene("Scenes/GameScene");
     }
     
     public void GameExit()

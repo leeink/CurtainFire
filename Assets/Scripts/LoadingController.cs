@@ -22,14 +22,6 @@ public class LoadingController : MonoBehaviour
     [SerializeField] private Sprite[] tipSprite;
     public LocalizeStringEvent localizeStringEvent;
     private int _tipIndex = 0;
-    private IDictionary<int, string> _tipScript = new Dictionary<int, string>()
-    {
-        { 0, "Kill the enemy and Level up your space" },
-        { 1, "As your space levels up, enemies also become stronger." },
-        { 2, "When you reach a certain level, a powerful enemy will appear." },
-        { 3, "Repair your space and become stronger by picking up randomly appearing items." },
-        { 4, "Leveling up allows you to perform stronger attacks." }
-    };
     
     public LocalizedString[] localizedTips = new LocalizedString[5];
     
@@ -44,7 +36,7 @@ public class LoadingController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        tipText.text = _tipScript[_tipIndex];
+        tipText.text = localizedTips[_tipIndex].GetLocalizedString();
         startButton.onClick.AddListener(OnClickGameStart);
         gameTipScript.onClick.AddListener(NextScript);
         //Task.Run(OtherDataLoad);
@@ -96,9 +88,8 @@ public class LoadingController : MonoBehaviour
 
     private void NextScript()
     {
-        _tipIndex = (_tipIndex + 1) % _tipScript.Count;
+        _tipIndex = (_tipIndex + 1) % localizedTips.Length;
         loadingTipImage.sprite = tipSprite[_tipIndex];
-        //tipText.text = _tipScript[_tipIndex];
         localizeStringEvent.StringReference = localizedTips[_tipIndex];
     }
 }

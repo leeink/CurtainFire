@@ -1,11 +1,17 @@
+using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 
 public class LobbyManager : Singleton<LobbyManager>
 {
-    void Start()
+    public TMP_Dropdown languageDropdown;
+
+    private void Awake()
     {
-        
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
+        languageDropdown.onValueChanged.AddListener(SetLang);
     }
 
     // Update is called once per frame
@@ -36,5 +42,10 @@ public class LobbyManager : Singleton<LobbyManager>
     public void GameExit()
     {
         Application.Quit();
+    }
+
+    public void SetLang(int index)
+    {
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
     }
 }
