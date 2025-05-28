@@ -358,9 +358,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StringReference:
     m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 1449973170176
+      m_KeyId: 2509676658688
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -676,9 +676,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StringReference:
     m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 169913532416
+      m_KeyId: 17358307328
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -1041,7 +1041,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1286296012095061483, guid: 038b63f7282fc374eaf8fc085050e79b, type: 3}
+  m_Sprite: {fileID: 1286296012095061483, guid: 42df7bea99b1097408a7437ff7af4d8a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1109,49 +1109,49 @@ MonoBehaviour:
   gameTipScript: {fileID: 1615928238}
   tipText: {fileID: 1002301922}
   tipSprite:
-  - {fileID: 1286296012095061483, guid: 038b63f7282fc374eaf8fc085050e79b, type: 3}
-  - {fileID: 6949532233803796030, guid: 567ab7cd2ac98074f8287e9b5b5b6f24, type: 3}
-  - {fileID: -1583921794169436334, guid: 0468ce58dde5b8c479635451cea18666, type: 3}
-  - {fileID: 5725318738762840226, guid: ed798eeeea7c1ff4ab986e8ff742abf3, type: 3}
-  - {fileID: -8098816289361140171, guid: 25ceee48d951381439f9b2b0c4866da0, type: 3}
+  - {fileID: 1286296012095061483, guid: 42df7bea99b1097408a7437ff7af4d8a, type: 3}
+  - {fileID: 6949532233803796030, guid: 23cabf1a3614bd04295dcaeaf2cb006d, type: 3}
+  - {fileID: -1583921794169436334, guid: eafb0171acb1aaa488c99e7ceab27c78, type: 3}
+  - {fileID: 5725318738762840226, guid: b37e1eb908a473b4d8d8cfcc0cc30cf3, type: 3}
+  - {fileID: -8098816289361140171, guid: 74972089f48386f408490debaea8da4b, type: 3}
   localizeStringEvent: {fileID: 1002301923}
   localizedTips:
   - m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 169913532416
+      m_KeyId: 17358307328
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   - m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 214893248512
+      m_KeyId: 21191901184
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   - m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 245230649344
+      m_KeyId: 22710239232
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   - m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 253447290880
+      m_KeyId: 25176489984
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   - m_TableReference:
-      m_TableCollectionName: GUID:1a7ff2d2dac97ce489bea5b0b80c0d4d
+      m_TableCollectionName: GUID:cdc6661e1630e92418828d4bc1db1d9a
     m_TableEntryReference:
-      m_KeyId: 298234068992
+      m_KeyId: 98979463168
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -1195,7 +1195,7 @@ Camera:
   m_GameObject: {fileID: 2115395291}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0.062368974, b: 0.16037738, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
